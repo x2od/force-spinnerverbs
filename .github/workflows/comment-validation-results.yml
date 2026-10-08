@@ -1,0 +1,32 @@
+name: Comment validation results
+
+# Runs after the validator finishes, with a token that can comment on PRs.
+# It checks out the default branch, so PR code is never executed with write access.
+on:
+  workflow_run:
+    workflows: ["Validate spinner verbs"]
+    types: [completed]
+
+permissions: {}
+
+jobs:
+  comment:
+    name: Post validation comment
+    if: github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Check out default branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Post or update the PR comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: bash .github/scripts/comment-validation-results.sh

@@ -1,0 +1,16 @@
+Free Use with Attribution License
+
+Copyright (c) 2026 dschach and the force-spinnerverbs contributors
+
+Permission is granted, free of charge and without limit, to any person obtaining a copy of this software and its contents (including the spinner verb list in forceSpinning.json) to use, copy, modify, merge, publish, distribute, sublicense, and sell copies, subject to the condition below. There is no cap on the number of uses, users, projects, or copies.
+
+Attribution condition:
+If you use this software, or any substantial part of it, in either of the following ways, you must give credit by including the notice "Spinner verbs from force-spinnerverbs (https://github.com/x2od/force-spinnerverbs) by dschach" in a place where your users will see it, such as your documentation, credits, about screen, or release notes:
+  1. for commercial purposes, meaning anything done for profit or in connection with revenue; or
+  2. in a closed-source product, service, or distribution, meaning one where the source code of your version is not publicly available under terms that allow the same use.
+
+No attribution is required for other uses, such as personal, educational, or non-commercial open-source projects.
+
+Contributions: by submitting a pull request or issue, you agree that your contribution is licensed under these same terms.
+
+THE SOFTWARE AND ITS CONTENTS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
