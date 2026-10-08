@@ -20,7 +20,7 @@ errors=0
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
-printf '%s\n' '{' '  "spinnerVerbs": {' '    "mode": "replace",' '    "verbs": [' > "$tmp/expected_head"
+printf '%s\n' '{' '  "spinnerVerbs": {' '    "mode": "MODE",' '    "verbs": [' > "$tmp/expected_head"
 printf '%s\n' '    ]' '  }' '}' > "$tmp/expected_tail"
 
 fail() {
@@ -38,8 +38,8 @@ check_commit() {
     return
   fi
 
-  if ! diff -q <(head -n 4 "$tmp/file.json") "$tmp/expected_head" > /dev/null; then
-    fail "[$short] first four lines must be exactly: {  /  \"spinnerVerbs\": {  /  \"mode\": \"replace\",  /  \"verbs\": ["
+  if ! diff -q <(head -n 4 "$tmp/file.json" | sed -E 's/"mode": "(replace|append)",/"mode": "MODE",/') "$tmp/expected_head" > /dev/null; then
+    fail "[$short] first four lines must be exactly: {  /  \"spinnerVerbs\": {  /  \"mode\": \"replace\" or \"append\",  /  \"verbs\": ["
   fi
 
   if ! diff -q <(tail -n 3 "$tmp/file.json") "$tmp/expected_tail" > /dev/null; then

@@ -1,6 +1,6 @@
 {
   "spinnerVerbs": {
-    "mode": "replace",
+    "mode": "append",
     "verbs": [
       "Apex-compiling",
       "AppExchange-installing",

@@ -10,7 +10,7 @@ A PR is checked automatically by the **Validate spinner verbs** check. Every com
    ```
    {
      "spinnerVerbs": {
-       "mode": "replace",
+       "mode": "replace" or "append",
        "verbs": [
    ...
        ]

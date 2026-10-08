@@ -31,11 +31,11 @@ This needs `jq` installed. It merges the verbs into your existing settings and l
 
 ### Replace or append?
 
-The file uses `"mode": "replace"`, so only these verbs show up. If you'd rather keep Claude's built-in verbs and add ours to them, change the mode to `"append"`:
+The file uses `"mode": "append"`, so these verbs are added alongside Claude's built-in verbs. If you want only our verbs, change the mode to `"replace"`:
 
 ```json
 "spinnerVerbs": {
-  "mode": "append",
+  "mode": "replace",
   "verbs": [ "..." ]
 }
 ```
