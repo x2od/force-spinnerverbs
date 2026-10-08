@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
 # Validates forceSpinning.json in every commit in the pushed/PR range that touches it.
-# Rules:
+# Rules (see CONTRIBUTING.md):
 #   - first four lines and last three lines match the required wrapper exactly
 #   - file is valid JSON with a spinnerVerbs.verbs array
-#   - no verb contains a space (multi-word verbs must be hyphenated)
-#   - every verb ends in "ing"
+#   - each verb uses only letters, digits, and hyphens
+#   - each verb starts with a capital letter (other letters are not checked for case)
+#   - each verb ends in "ing"
+#   - no duplicate verbs (case-insensitive)
+#   - verbs are in alphabetical order (case-insensitive)
 set -uo pipefail
 
 FILE="forceSpinning.json"
 ZERO="0000000000000000000000000000000000000000"
 BASE_SHA="${BASE_SHA:-}"
 HEAD_SHA="${HEAD_SHA:-HEAD}"
+REPORT_FILE="${REPORT_FILE:-}"
 errors=0
 
 tmp=$(mktemp -d)
@@ -21,6 +25,7 @@ printf '%s\n' '    ]' '  }' '}' > "$tmp/expected_tail"
 
 fail() {
   echo "::error file=$FILE::$1"
+  echo "- $1" >> "$tmp/problems.txt"
   errors=$((errors + 1))
 }
 
@@ -47,12 +52,29 @@ check_commit() {
   fi
 
   while IFS= read -r verb; do
-    fail "[$short] verb contains a space: \"$verb\" (replace spaces with -)"
-  done < <(jq -r '.spinnerVerbs.verbs[] | tostring | select(test(" "))' "$tmp/file.json")
+    fail "[$short] verb may only contain letters, digits, and hyphens: \"$verb\""
+  done < <(jq -r '.spinnerVerbs.verbs[] | tostring | select(test("^[A-Za-z0-9-]+$") | not)' "$tmp/file.json")
+
+  while IFS= read -r verb; do
+    fail "[$short] verb must start with a capital letter: \"$verb\""
+  done < <(jq -r '.spinnerVerbs.verbs[] | tostring | select(test("^[A-Z]") | not)' "$tmp/file.json")
 
   while IFS= read -r verb; do
     fail "[$short] verb must end in \"ing\": \"$verb\""
   done < <(jq -r '.spinnerVerbs.verbs[] | tostring | select(test("ing$") | not)' "$tmp/file.json")
+
+  while IFS= read -r dupes; do
+    fail "[$short] duplicate verb (case-insensitive): $dupes"
+  done < <(jq -r '.spinnerVerbs.verbs | map(tostring) | group_by(ascii_downcase)[] | select(length > 1) | join(" / ")' "$tmp/file.json")
+
+  while IFS= read -r order; do
+    fail "[$short] verbs are out of alphabetical order: $order"
+  done < <(jq -r '
+    .spinnerVerbs.verbs | map(tostring) as $v
+    | ($v | sort_by(ascii_downcase)) as $s
+    | [range(0; $v | length) | select($v[.] != $s[.])] as $bad
+    | if ($bad | length) == 0 then empty
+      else "\($v[$bad[0]]) should be replaced by \($s[$bad[0]]) at that position" end' "$tmp/file.json")
 }
 
 # Commits to check: every commit in the range that touches the file.
@@ -72,6 +94,9 @@ for c in "${commits[@]}"; do
 done
 
 if [ "$errors" -gt 0 ]; then
+  if [ -n "$REPORT_FILE" ]; then
+    cp "$tmp/problems.txt" "$REPORT_FILE"
+  fi
   echo "$errors problem(s) found in $FILE. See annotations above."
   exit 1
 fi
