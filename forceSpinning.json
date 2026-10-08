@@ -26,6 +26,7 @@
       "Permission-set-assigning",
       "Process-builder-migrating",
       "Production-deploying",
+      "S-controlling",
       "Sandboxing",
       "Soql-querying",
       "Tenant-secret-rotating",
