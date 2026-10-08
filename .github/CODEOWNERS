@@ -1,3 +1,8 @@
 # Every pull request needs approval from a code owner before it can merge to main.
-# @x2od/approvers can approve; @dschach is the repo owner.
-* @dschach @x2od/approvers
+# The last matching pattern wins, so the forceSpinning.json rule goes after the catch-all.
+
+# Everything in the repo is owned by @dschach.
+* @dschach
+
+# The verb list can also be approved by the approvers team.
+/forceSpinning.json @dschach @x2od/approvers
