@@ -4,4 +4,4 @@ People whose pull requests have been merged into this project. This file is gene
 
 | Contributor | Merged PRs |
 | --- | --- |
-| [@dschach](https://github.com/dschach) | 1 |
+| [@dschach](https://github.com/dschach) | 4 |
