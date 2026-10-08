@@ -1,0 +1,31 @@
+name: Complaint
+description: Tell us about a spinner verb you have a problem with
+title: "[Complaint]: "
+labels: ["complaint"]
+body:
+  - type: input
+    id: verbs
+    attributes:
+      label: Verb or verbs
+      description: Enter each verb exactly as it appears in forceSpinning.json. Separate multiple verbs with commas.
+      placeholder: "Trailblazing, Sandboxing"
+    validations:
+      required: true
+  - type: dropdown
+    id: problem
+    attributes:
+      label: What is the problem?
+      options:
+        - Offensive or inappropriate
+        - Inaccurate or misleading
+        - Spelling, grammar, or formatting
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Tell us more about the issue.
+    validations:
+      required: true

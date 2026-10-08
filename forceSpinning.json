@@ -1,0 +1,36 @@
+{
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": [
+      "Trailblazing",
+      "Einstein-analyzing",
+      "Process-builder-migrating",
+      "Flow-debugging",
+      "Omni-channel-routing",
+      "Apex-compiling",
+      "Governor-limit-checking",
+      "Data-loader-exporting",
+      "Sandboxing",
+      "CPQ-calculating",
+      "Soql-querying",
+      "Lwc-rendering",
+      "Permission-set-assigning",
+      "Validation-rule-firing",
+      "Mulesoft-integrating",
+      "Dashboard-refreshing",
+      "Lead-converting",
+      "Opportunity-winning",
+      "Astro-high-fiving",
+      "Code-coverage-boosting",
+      "Production-deploying",
+      "Metadata-retrieving",
+      "Org-sharing-calculating",
+      "AppExchange-installing",
+      "Dreamforce-planning",
+      "Vlocity-mapping",
+      "Hyperforce-scaling",
+      "Data-cloud-ingesting",
+      "Tenant-secret-rotating"
+    ]
+  }
+}
