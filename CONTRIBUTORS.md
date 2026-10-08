@@ -5,3 +5,4 @@ People whose pull requests have been merged into this project. This file is gene
 | Contributor | Merged PRs |
 | --- | --- |
 | [@dschach](https://github.com/dschach) | 8 |
+| [@marcusdietz](https://github.com/marcusdietz) | 1 |
