@@ -21,7 +21,7 @@ jobs:
       TOKEN_SET: ${{ secrets.CONTRIBUTORS_TOKEN != '' }}
     steps:
       - name: Check out main
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: main
           token: ${{ secrets.CONTRIBUTORS_TOKEN }}
