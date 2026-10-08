@@ -1,11 +1,6 @@
 ## Summary
 <!-- What verbs are you adding, changing, or removing, and why? -->
 
-## Verb changes
-- Added:
-- Changed:
-- Removed:
-
 ## Checklist (see [CONTRIBUTING.md](../CONTRIBUTING.md))
 - [ ] Wrapper lines (first four and last three) are unchanged
 - [ ] `forceSpinning.json` is valid JSON
@@ -17,3 +12,6 @@
 
 ## Notes for reviewers
 <!-- Context, examples, or links to a complaint or feature request. -->
+
+## Snarky additions
+<!-- Anything else you think should be said? -->
