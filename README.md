@@ -8,26 +8,29 @@ Every verb is a little joke about the Salesforce world, so if you've ever watche
 
 ## Add it to your Claude
 
-Claude Code reads spinner verbs from the `spinnerVerbs` setting in `~/.claude/settings.json`. This repo's [`forceSpinning.json`](forceSpinning.json) has that block ready to go.
+Claude Code reads spinner verbs from the `spinnerVerbs` setting. It works in any settings file, and this repo's [`forceSpinning.json`](forceSpinning.json) has the block ready to go. The setting is documented in the [settings reference](https://code.claude.com/docs/en/settings-reference#spinnerverbs).
 
 ### Option 1: Copy and paste
 
 1. Open [`forceSpinning.json`](forceSpinning.json) and copy the whole `spinnerVerbs` object.
 2. Open `~/.claude/settings.json` and paste it in as a top-level key. If the file already has other settings, add a comma after the last existing key.
-3. Save the file. The next spinner picks up the new verbs.
+3. Save the file. The next spinner picks up the new verbs without a restart.
 
 ### Option 2: One command (macOS / Linux)
 
-Back up your settings first, then run:
+This needs `jq` installed. It backs up your settings, then merges the verbs in and leaves your other settings alone:
 
 ```bash
+mkdir -p ~/.claude
+[ -f ~/.claude/settings.json ] || echo '{}' > ~/.claude/settings.json
 cp ~/.claude/settings.json ~/.claude/settings.backup.json
 curl -fsSL https://raw.githubusercontent.com/x2od/force-spinnerverbs/main/forceSpinning.json \
   | jq -s '.[0] * .[1]' ~/.claude/settings.json - > ~/.claude/settings.new.json \
-  && mv ~/.claude/settings.new.json ~/.claude/settings.json
+  && mv ~/.claude/settings.new.json ~/.claude/settings.json \
+  || { rm -f ~/.claude/settings.new.json; echo "Install failed. Your settings are unchanged." >&2; }
 ```
 
-This needs `jq` installed. It merges the verbs into your existing settings and leaves the rest alone.
+If anything fails, your settings file is left as it was. A copy of the previous version is also saved as `~/.claude/settings.backup.json`.
 
 ### Replace or append?
 
@@ -39,8 +42,6 @@ The file uses `"mode": "append"`, so these verbs are added alongside Claude's bu
   "verbs": [ "..." ]
 }
 ```
-
-Requires a recent Claude Code version. The `spinnerVerbs` setting is newer and community sources list v2.1.23 or later.
 
 ## Contribute a verb
 

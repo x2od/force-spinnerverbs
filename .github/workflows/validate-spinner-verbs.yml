@@ -17,6 +17,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Test the validator
+        run: bash scripts/test-validate-spinner-verbs.sh
+
       - name: Check every commit that touches forceSpinning.json
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}

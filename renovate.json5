@@ -1,0 +1,139 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"description": "Custom renovate rules for @x2od",
+	"extends": [
+		":ignoreModulesAndTests",
+		"group:react",
+		"replacements:all",
+		"workarounds:all",
+		"docker:pinDigests",
+		//":semanticCommitScope({{depName}})",
+		":approveMajorUpdates",
+		":separateMultipleMajorReleases",
+		":widenPeerDependencies"
+	],
+	"schedule": [],
+	"timezone": "America/Los_Angeles",
+	"configMigration": true,
+	"automergeType": "pr",
+	"automergeStrategy": "squash",
+	"commitMessageLowerCase": "auto",
+	//"rangeStrategy": "bump",
+	"commitBodyTable": true,
+	"semanticCommits": "enabled",
+	"semanticCommitScope": "{{depName}}",
+	"commitMessageExtra": "from {{currentVersion}} to {{#if isPinDigest}}{{{newDigestShort}}}{{else}}{{#if isMajor}}{{newVersion}}{{else}}{{#if isSingleVersion}}{{newVersion}}{{else}}{{#if newValue}}{{{newVersion}}}{{else}}{{{newDigestShort}}}{{/if}}{{/if}}{{/if}}{{/if}}",
+	"dependencyDashboard": true,
+	"dependencyDashboardAutoclose": true,
+	"configWarningReuseIssue": false,
+	"separateMinorPatch": false,
+	"pinDigests": false,
+	"github-actions": {
+		"description": "All Github updates",
+		"automergeType": "pr",
+		"managerFilePatterns": ["^(workflow-templates|\\.(?:github|gitea|forgejo)/workflows)/[^/]+\\.ya?ml$", "(^|/)action\\.ya?ml$"],
+		"semanticCommitType": "ci",
+		"semanticCommitScope": "{{depName}}",
+		"commitMessageTopic": "action {{depName}}",
+		"commitMessageExtra": "from {{currentVersion}} to {{#if isPinDigest}}{{{newDigestShort}}}{{else}}{{#if isMajor}}{{prettyNewMajor}}{{else}}{{#if isSingleVersion}}{{prettyNewVersion}}{{else}}{{#if newValue}}{{{prettyNewVersion}}}{{else}}{{{newDigestShort}}}{{/if}}{{/if}}{{/if}}{{/if}}"
+	},
+	"major": { "autoApprove": true, "automerge": false, "addLabels": ["renovate", "major"] },
+	"patch": { "autoApprove": true, "automerge": false, "addLabels": ["renovate", "patch"] },
+	"minor": { "autoApprove": true, "automerge": false, "addLabels": ["renovate", "minor"] },
+	"pre-commit": { "enabled": true },
+	"vulnerabilityAlerts": { "enabled": true },
+	"lockFileMaintenance": { "enabled": false },
+	"packageRules": [
+		{
+			"description": "all minor/patch updates",
+			"matchCurrentVersion": ">= 1.0.0",
+			"matchUpdateTypes": ["minor", "patch"]
+		},
+		{
+			"matchManagers": ["npm"],
+			"description": "All npm updates. Note commit extra message was set globally.",
+			"rangeStrategy": "bump"
+		},
+		{
+			"description": "npm dependencies (rare)",
+			"semanticCommitType": "deps",
+			"semanticCommitScope": "{{depName}}",
+			"matchManagers": ["npm"],
+			"matchDepTypes": ["dependencies"],
+			"commitMessageTopic": "dependency {{depName}}"
+		},
+		{
+			"description": "npm devDependencies",
+			"semanticCommitType": "build",
+			"semanticCommitScope": "{{depName}}",
+			"matchManagers": ["npm"],
+			"matchDepTypes": ["devDependencies", "optionalDependencies"],
+			"commitMessageTopic": "devDependency {{depName}}"
+		},
+		{
+			"description": "npm peerDependencies",
+			"matchManagers": ["npm"],
+			"semanticCommitType": "build",
+			"matchDepTypes": ["peerDependencies"],
+			"rangeStrategy": "widen",
+			"commitMessageTopic": "peerDependency {{depName}}"
+		},
+		{
+			"description": "renovate updates require approval",
+			"matchManagers": ["npm"],
+			"matchPackageNames": ["renovate"],
+			"dependencyDashboardApproval": true,
+			"autoApprove": false
+		},
+		{
+			"matchPackageNames": ["/jest/"],
+			"groupName": "jest",
+			"matchManagers": ["npm"],
+			"semanticCommitType": "build",
+			"semanticCommitScope": "jest packages"
+		},
+		{
+			"matchPackageNames": ["/eslint/", "!eslint", "globals"],
+			"groupName": "eslint plugins",
+			"matchManagers": ["npm"],
+			"semanticCommitType": "build",
+			"semanticCommitScope": "eslint plugins"
+		},
+		{
+			"description": "Github minor/patch updates",
+			"matchCurrentVersion": ">=1.x",
+			"matchManagers": ["github-actions"],
+			"matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"],
+			"enabled": false
+		},
+		{
+			"description": "Github major updates",
+			"matchCurrentVersion": ">=1.x",
+			"matchManagers": ["github-actions"],
+			"matchUpdateTypes": ["major"],
+			"automerge": false,
+			"autoApprove": true,
+			"dependencyDashboardApproval": true,
+			"commitMessageExtra": "from {{currentVersion}} to {{#if isPinDigest}}{{{newDigestShort}}}{{else}}{{#if isMajor}}{{prettyNewMajor}}{{else}}{{#if isSingleVersion}}{{prettyNewVersion}}{{else}}{{#if newValue}}{{{prettyNewVersion}}}{{else}}{{{newDigestShort}}}{{/if}}{{/if}}{{/if}}{{/if}}"
+		},
+		{
+			"description": "All GitHub updates",
+			"matchManagers": ["github-actions"]
+		},
+		{
+			"description": "All prerelease",
+			"matchCurrentVersion": "<1.0.0",
+			"automerge": false,
+			"autoApprove": false
+		},
+		{
+			"description": "Minor/Patch updates to automerge, to save time but allow some clutter, overriding all above rules",
+			"matchManagers": ["npm"],
+			"matchPackageNames": ["/prettier/", "lint-staged", "marked", "mocha", "husky", "release-please", "/^@x2od/"],
+			"matchUpdateTypes": ["minor", "patch"],
+			"automerge": true,
+			"autoApprove": true,
+			"addLabels": ["auto-merged"]
+		}
+	]
+}
