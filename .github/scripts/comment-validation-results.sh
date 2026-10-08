@@ -6,7 +6,8 @@ set -uo pipefail
 
 MARKER='<!-- spinner-verb-validation -->'
 
-pr=$(gh api "repos/$REPO/commits/$HEAD_SHA/pulls" --jq '.[] | select(.state == "open") | .number' | head -n 1)
+# Match on the head commit. The commits/{sha}/pulls endpoint misses PRs from forks.
+pr=$(gh api --paginate "repos/$REPO/pulls?state=open&per_page=100" --jq ".[] | select(.head.sha == \"$HEAD_SHA\") | .number" | head -n 1)
 if [ -z "$pr" ]; then
   echo "No open PR for $HEAD_SHA; nothing to comment on."
   exit 0
