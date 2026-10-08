@@ -38,7 +38,7 @@ The file uses `"mode": "append"`, so these verbs are added alongside Claude's bu
 
 ```json
 "spinnerVerbs": {
-  "mode": "replace",
+  "mode": "append",
   "verbs": [ "..." ]
 }
 ```
