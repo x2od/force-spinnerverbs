@@ -6,12 +6,14 @@
 - Changed:
 - Removed:
 
-## Checklist
-- [ ] Multi-word verbs are hyphenated (no spaces), e.g. `Data-loader-exporting`
-- [ ] Every verb ends in `ing`
-- [ ] No duplicate verbs
-- [ ] The first four and last three lines of `forceSpinning.json` are unchanged
+## Checklist (see [CONTRIBUTING.md](../CONTRIBUTING.md))
+- [ ] Wrapper lines (first four and last three) are unchanged
 - [ ] `forceSpinning.json` is valid JSON
+- [ ] Verbs use only letters, digits, and hyphens (spaces replaced with `-`)
+- [ ] Each verb starts with a capital letter
+- [ ] Each verb ends in `ing`
+- [ ] No duplicate verbs (case-insensitive)
+- [ ] Verbs are in alphabetical order
 
 ## Notes for reviewers
-<!-- Anything that would help someone review this, e.g. context, examples, or links to a complaint or feature request. -->
+<!-- Context, examples, or links to a complaint or feature request. -->
