@@ -32,6 +32,10 @@ curl -fsSL https://raw.githubusercontent.com/x2od/force-spinnerverbs/main/forceS
 
 If anything fails, your settings file is left as it was. A copy of the previous version is also saved as `~/.claude/settings.backup.json`.
 
+### Verify what gets installed
+
+Want to see exactly what this script installs before running it? View the [`forceSpinning.json` file on GitHub](https://raw.githubusercontent.com/x2od/force-spinnerverbs/main/forceSpinning.json). The file is read-only and contains only spinner verb names—nothing malicious or unexpected.
+
 ### Replace or append?
 
 The file uses `"mode": "append"`, so these verbs are added alongside Claude's built-in verbs. If you want only our verbs, change the mode to `"replace"`:
