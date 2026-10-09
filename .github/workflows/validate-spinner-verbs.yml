@@ -1,5 +1,8 @@
 name: Validate spinner verbs
 
+# Runs on every push and pull request. The job checks whether a watched file
+# changed. If none changed, the later steps are skipped, and the job still passes.
+# That keeps the required check reporting on every PR, so unrelated PRs can merge.
 on:
   push:
   pull_request:
@@ -17,10 +20,42 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check whether a watched file changed
+        id: changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          ZERO="0000000000000000000000000000000000000000"
+          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "$ZERO" ]; then
+            echo "No base commit. Running the checks."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          WATCHED=(
+            forceSpinning.json
+            .github/scripts/validate-spinner-verbs.sh
+            scripts/test-validate-spinner-verbs.sh
+            .github/workflows/validate-spinner-verbs.yml
+          )
+          if ! files=$(git diff --name-only "$BASE_SHA...$HEAD_SHA" -- "${WATCHED[@]}"); then
+            echo "Could not compare commits. Running the checks."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif [ -n "$files" ]; then
+            echo "Watched files changed:"
+            echo "$files"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No watched files changed. Skipping the checks."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Test the validator
+        if: steps.changes.outputs.changed == 'true'
         run: bash scripts/test-validate-spinner-verbs.sh
 
       - name: Check every commit that touches forceSpinning.json
+        if: steps.changes.outputs.changed == 'true'
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}

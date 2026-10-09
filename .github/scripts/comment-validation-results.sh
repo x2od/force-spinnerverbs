@@ -20,6 +20,20 @@ if [ "$(git rev-parse FETCH_HEAD)" != "$HEAD_SHA" ]; then
 fi
 
 base_sha=$(gh api "repos/$REPO/pulls/$pr" --jq '.base.sha')
+
+# Skip PRs that do not change a watched file. Keep this list in sync with the validate workflow.
+WATCHED=(
+  forceSpinning.json
+  .github/scripts/validate-spinner-verbs.sh
+  scripts/test-validate-spinner-verbs.sh
+  .github/workflows/validate-spinner-verbs.yml
+)
+if files=$(git diff --name-only "$base_sha...$HEAD_SHA" -- "${WATCHED[@]}"); then
+  if [ -z "$files" ]; then
+    echo "PR #$pr does not change a watched file; no comment."
+    exit 0
+  fi
+fi
 report=$(mktemp)
 BASE_SHA="$base_sha" HEAD_SHA="$HEAD_SHA" REPORT_FILE="$report" \
   bash .github/scripts/validate-spinner-verbs.sh > /dev/null 2>&1
