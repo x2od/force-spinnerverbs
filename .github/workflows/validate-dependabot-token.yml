@@ -1,6 +1,6 @@
-name: Validate DEPENDABOT_TOKEN
+name: Validate DEPENDABOT_TOKEN_X2OD
 
-# Manual check that the DEPENDABOT_TOKEN secret works.
+# Manual check that the DEPENDABOT_TOKEN_X2OD secret works.
 # Prints the account name and repository permission only. Never prints the token.
 on:
   workflow_dispatch:
@@ -13,11 +13,11 @@ jobs:
     steps:
       - name: Check the token
         env:
-          GH_TOKEN: ${{ secrets.DEPENDABOT_TOKEN }}
+          GH_TOKEN: ${{ secrets.DEPENDABOT_TOKEN_X2OD }}
           REPO: ${{ github.repository }}
         run: |
           if [[ -z "$GH_TOKEN" ]]; then
-            echo "::error::DEPENDABOT_TOKEN is not set."
+            echo "::error::DEPENDABOT_TOKEN_X2OD is not set."
             exit 1
           fi
           login=$(gh api user --jq .login) || { echo "::error::Token was rejected by GitHub."; exit 1; }
