@@ -1,0 +1,43 @@
+name: Dependabot approve and auto-merge
+
+# Runs only for pull requests opened by Dependabot.
+# Uses pull_request_target so the token has write access on Dependabot PRs.
+# This workflow never checks out or runs code from the pull request.
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, closed]
+
+permissions: {}
+
+jobs:
+  approve-and-auto-merge:
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.event.action != 'closed' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
+    steps:
+      - name: Approve the PR
+        run: gh pr review --approve "$PR_URL"
+
+      - name: Add the dependabot label
+        run: gh pr edit "$PR_URL" --add-label dependabot
+
+      - name: Turn on auto-merge
+        run: gh pr merge --auto --squash "$PR_URL"
+
+  label-auto-merged:
+    # Runs only after a Dependabot PR is merged. A PR closed without merging is skipped.
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
+    steps:
+      - name: Add the auto-merged label
+        run: gh pr edit "$PR_URL" --add-label auto-merged
