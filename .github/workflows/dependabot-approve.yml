@@ -1,0 +1,107 @@
+name: Dependabot title, approve, and auto-merge
+
+# Runs only for pull requests opened by Dependabot.
+#
+# Uses pull_request_target, not pull_request. Dependabot PRs get a read-only
+# GITHUB_TOKEN on pull_request, so the title edit, approval, and label would
+# fail there. This workflow never checks out or runs code from the pull request.
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, edited, closed]
+
+permissions: {}
+
+jobs:
+  rename-title:
+    # Rewrites the Dependabot scope to the package name, to match Renovate's
+    # title style: build(deps-dev): bump js-yaml ... -> build(js-yaml): bump js-yaml ...
+    # Only a missing scope, deps, or deps-dev is replaced. Other scopes are kept.
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.event.action != 'closed' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
+      TITLE: ${{ github.event.pull_request.title }}
+    steps:
+      - name: Fetch Dependabot metadata
+        id: dependabot-fetch
+        uses: dependabot/fetch-metadata@v3
+
+      - name: Replace the title scope with the package name
+        env:
+          PACKAGE_NAMES: ${{ steps.dependabot-fetch.outputs.dependency-names }}
+        run: |
+          echo "Current title: $TITLE"
+          if [[ -z "$PACKAGE_NAMES" ]]; then
+            echo "No dependency names in Dependabot metadata. Leaving the title unchanged."
+            exit 0
+          fi
+
+          # type, optional (scope), optional breaking-change "!", then ": description"
+          pattern='^([a-z]+)(\(([^)]*)\))?(!)?: (.*)$'
+          if [[ ! "$TITLE" =~ $pattern ]]; then
+            echo "Title is not in Conventional Commits form. Leaving it unchanged."
+            exit 0
+          fi
+          type="${BASH_REMATCH[1]}"
+          scope="${BASH_REMATCH[3]}"
+          breaking="${BASH_REMATCH[4]}"
+          description="${BASH_REMATCH[5]}"
+
+          case "$scope" in
+            "" | deps | deps-dev) ;;
+            *)
+              echo "Scope '$scope' is not a Dependabot default. Leaving the title unchanged."
+              exit 0
+              ;;
+          esac
+
+          new_title="${type}(${PACKAGE_NAMES})${breaking}: ${description}"
+          if [[ "$new_title" == "$TITLE" ]]; then
+            echo "Title already matches. Nothing to change."
+            exit 0
+          fi
+          echo "New title: $new_title"
+          gh pr edit "$PR_URL" --title "$new_title"
+
+  approve-and-auto-merge:
+    # Runs after the title step. Runs on open, reopen, and new commits only.
+    # Skipping edited events stops a second approval and a second auto-merge request.
+    needs: rename-title
+    if: ${{ !cancelled() && github.event.pull_request.user.login == 'dependabot[bot]' && contains(fromJSON('["opened","reopened","synchronize"]'), github.event.action) }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
+    steps:
+      - name: Approve the PR
+        run: gh pr review --approve "$PR_URL"
+
+      - name: Add the dependabot label
+        run: gh pr edit "$PR_URL" --add-label dependabot
+
+      - name: Turn on auto-merge
+        run: |
+          if [[ "$(gh pr view "$PR_URL" --json autoMergeRequest --jq '.autoMergeRequest != null')" == "true" ]]; then
+            echo "Auto-merge is already on."
+          else
+            gh pr merge --auto --squash "$PR_URL"
+          fi
+
+  label-auto-merged:
+    # Runs only after a Dependabot PR merges. A PR closed without merging is skipped.
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
+    steps:
+      - name: Add the auto-merged label
+        run: gh pr edit "$PR_URL" --add-label auto-merged

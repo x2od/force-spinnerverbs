@@ -2,7 +2,7 @@
 
 People whose pull requests have been merged into this project. This file is generated automatically from merged PRs, so don't edit it by hand.
 
-| Contributor | Merged PRs |
-| --- | --- |
-| [@dschach](https://github.com/dschach) | 10 |
-| [@marcusdietz](https://github.com/marcusdietz) | 1 |
+| Contributor |
+| --- |
+| [@dschach](https://github.com/dschach) |
+| [@marcusdietz](https://github.com/marcusdietz) |
