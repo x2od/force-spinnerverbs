@@ -32,6 +32,32 @@ curl -fsSL https://raw.githubusercontent.com/x2od/force-spinnerverbs/main/forceS
 
 If anything fails, your settings file is left as it was. A copy of the previous version is also saved as `~/.claude/settings.backup.json`.
 
+### Option 3: One command (Windows, PowerShell)
+
+Open PowerShell and paste this block. It needs no extra tools. It backs up your settings first, then adds the verbs and keeps your other settings:
+
+```powershell
+$settingsPath = Join-Path $HOME ".claude\settings.json"
+$newPath = "$settingsPath.new"
+New-Item -ItemType Directory -Force -Path (Split-Path $settingsPath) | Out-Null
+if (-not (Test-Path $settingsPath)) { '{}' | Set-Content -Path $settingsPath }
+Copy-Item $settingsPath "$settingsPath.backup" -Force
+try {
+  $url = "https://raw.githubusercontent.com/x2od/force-spinnerverbs/main/forceSpinning.json"
+  $verbs = (Invoke-WebRequest -UseBasicParsing -Uri $url).Content | ConvertFrom-Json
+  $settings = Get-Content $settingsPath -Raw | ConvertFrom-Json
+  Add-Member -InputObject $settings -NotePropertyName spinnerVerbs -NotePropertyValue $verbs.spinnerVerbs -Force
+  [System.IO.File]::WriteAllText($newPath, ($settings | ConvertTo-Json -Depth 100))
+  Move-Item $newPath $settingsPath -Force
+  Write-Output "Install done."
+} catch {
+  Remove-Item $newPath -ErrorAction SilentlyContinue
+  Write-Error "Install failed. Your settings are unchanged."
+}
+```
+
+If anything fails, your settings file is left as it was. A copy of the previous version is also saved as `settings.json.backup` in the same folder.
+
 ### Verify what gets installed
 
 Want to see exactly what this script installs before running it? View the [`forceSpinning.json` file on GitHub](https://raw.githubusercontent.com/x2od/force-spinnerverbs/main/forceSpinning.json). The file is read-only and contains only spinner verb names—nothing malicious or unexpected.
@@ -53,7 +79,8 @@ Want to add your favorite? Read [CONTRIBUTING.md](CONTRIBUTING.md) for the rules
 
 - Capitalized first letter, letters/digits/hyphens only, e.g. `Data-loader-exporting`
 - Ends in `ing`
-- No duplicates, and keep the list alphabetized
+- No duplicates
+- Keep the list alphabetized
 
 Open a pull request. A bot checks your verbs and comments on your PR with the results, so you'll know right away if something needs fixing.
 

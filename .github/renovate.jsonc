@@ -1,0 +1,25 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": ["github>x2od/.github:renovate.json5"],
+	/* 	"packageRules": [
+		{
+			"matchManagers": ["github-actions"],
+			"commitMessageExtra": "from {{currentVersion}} to {{#if isPinDigest}}{{{newDigestShort}}}{{else}}{{#if isMajor}}{{newVersion}}{{else}}{{#if isSingleVersion}}{{newVersion}}{{else}}{{#if newValue}}{{{newVersion}}}{{else}}{{{newDigestShort}}}{{/if}}{{/if}}{{/if}}{{/if}}"
+		}
+	], */
+	"autoApprove": true,
+	"automerge": true,
+	"addLabels": ["renovate", "auto-merged"],
+	"dependencyDashboardAutoclose": true,
+	"configWarningReuseIssue": false,
+	"packageRules": [
+		{
+			"description": "Auto-approve and auto-merge all updates. Later rules override the preset's rules.",
+			"matchPackageNames": ["*"],
+			"automerge": true,
+			"autoApprove": true,
+			"dependencyDashboardApproval": false,
+			"addLabels": ["renovate", "auto-merged"]
+		}
+	]
+}
