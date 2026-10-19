@@ -1,10 +1,12 @@
 name: Update contributors
 
-# Regenerates CONTRIBUTORS.md after each merge to main.
+# Regenerates CONTRIBUTORS.md when a pull request to main is merged by a person.
+# Bot pull requests (Dependabot, Renovate) and closed-without-merge pull requests are skipped.
 # Needs a repo secret CONTRIBUTORS_TOKEN: a fine-grained personal access token with
 # Contents: read and write on this repo, from an account allowed to bypass branch protection.
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches: [main]
   workflow_dispatch:
 
@@ -15,6 +17,11 @@ concurrency: update-contributors
 
 jobs:
   update:
+    # Run for merged pull requests from people, or by hand.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+       github.event.pull_request.user.type != 'Bot')
     runs-on: ubuntu-latest
     env:
       # The secrets context isn't allowed in step conditions, so check it here once.
