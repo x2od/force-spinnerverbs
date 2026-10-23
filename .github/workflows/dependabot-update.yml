@@ -9,10 +9,9 @@ name: Dependabot on Pull Request
 # event is safe here.
 #
 # From 2026-11-02, GitHub blocks pull_request_target in public repositories unless an
-# Actions event policy allows it. The x2od organization policy "Allow
-# pull_request_target for the Dependabot workflow" allows the event for
-# .github/workflows/dependabot-update.yml in every x2od repository, so keep this file
-# name.
+# Actions event policy allows it. This repository has the policy "Allow
+# pull_request_target for the Dependabot workflow" (Settings > Actions > Policies). It
+# allows the event for .github/workflows/dependabot-update.yml, so keep this file name.
 on:
   pull_request_target:
     types: [opened, reopened, synchronize, edited, closed]
