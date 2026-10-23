@@ -1,10 +1,17 @@
-name: Dependabot title, approve, and auto-merge
+name: Dependabot on Pull Request
 
-# Runs only for pull requests opened by Dependabot.
+# Runs only for pull requests opened by Dependabot. This workflow is stand-alone. It
+# does not call the x2od reusable Dependabot workflow, but it has the same file name
+# and the same tasks: edit the title, add labels, approve, and turn on auto-merge.
 #
-# Uses pull_request_target, not pull_request. Dependabot PRs get a read-only
-# GITHUB_TOKEN on pull_request, so the title edit, approval, and label would
-# fail there. This workflow never checks out or runs code from the pull request.
+# Uses pull_request_target. The workflow runs from the default branch with a writable
+# GITHUB_TOKEN, and it never checks out or runs code from the pull request, so the
+# event is safe here.
+#
+# From 2026-11-02, GitHub blocks pull_request_target in public repositories unless an
+# Actions event policy allows it. This repository has the policy "Allow
+# pull_request_target for the Dependabot workflow" (Settings > Actions > Policies). It
+# allows the event for .github/workflows/dependabot-update.yml, so keep this file name.
 on:
   pull_request_target:
     types: [opened, reopened, synchronize, edited, closed]
