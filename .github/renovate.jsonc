@@ -4,7 +4,9 @@
 	"autoApprove": true,
 	"automerge": true,
 	"addLabels": ["renovate", "auto-merged"],
-	"dependencyDashboardAutoclose": true,
+	"dependencyDashboard": {
+		"autoclose": true,
+	},
 	"configWarningReuseIssue": false,
 	"packageRules": [
 		{
@@ -13,7 +15,7 @@
 			"automerge": true,
 			"autoApprove": true,
 			"dependencyDashboardApproval": false,
-			"addLabels": ["renovate", "auto-merged"]
-		}
-	]
+			"addLabels": ["renovate", "auto-merged"],
+		},
+	],
 }
